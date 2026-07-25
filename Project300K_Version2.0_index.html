@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Project300K">
+<title>Project300K Version 2.0</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--good:#047857;--bad:#b91c1c;--warn:#b45309;--soft:#eef2ff}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:max(18px,env(safe-area-inset-top)) 16px 12px}
+.header-row{max-width:980px;margin:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+h1,h2,h3,p{margin-top:0}h1{font-size:22px;margin-bottom:0}.eyebrow{font-size:11px;letter-spacing:.18em;font-weight:900;color:var(--muted);margin-bottom:4px}.version{font-size:12px;background:var(--soft);border-radius:999px;padding:7px 10px;font-weight:800}
+main{max-width:980px;margin:auto;padding:14px 14px calc(104px + env(safe-area-inset-bottom))}
+.hero{background:linear-gradient(145deg,#111827,#374151);color:#fff;border-radius:28px;padding:20px}.hero-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-end}.hero-value{font-size:36px;font-weight:900;margin:6px 0 4px}
+.small{font-size:12px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:16px}.metric{min-height:92px}.metric b{display:block;font-size:22px;margin-top:6px}.section{margin-top:12px}.section-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.primary,.secondary,.danger-btn{border:0;border-radius:14px;padding:12px 15px;font-weight:800}.primary{background:#111827;color:#fff}.secondary{background:#eef2f7;color:#111827}.danger-btn{background:#fee2e2;color:#991b1b}.wide{width:100%}
+label{display:block;font-size:13px;font-weight:800;margin:11px 0}input,select,textarea{width:100%;margin-top:6px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(6,1fr);background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+.tab{border:0;background:none;color:var(--muted);font-size:10px;padding:6px 1px}.tab b{display:block;font-size:17px;margin-bottom:2px}.tab.active{color:#111827;font-weight:900}
+.page{display:none}.page.active{display:block}.pill{font-size:11px;background:#f3f4f6;border-radius:999px;padding:5px 8px}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.race-item,.review-item{padding:14px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}.race-item:first-child,.review-item:first-child{border-top:0}
+.row-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.mini{border:0;background:#eef2f7;border-radius:10px;padding:7px 9px;font-size:12px}
+.stat-line{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line)}.notice{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:14px;padding:12px;font-size:13px}
+.hidden{display:none!important}
+dialog{border:0;border-radius:24px 24px 0 0;width:min(100%,760px);margin:auto auto 0;padding:0;max-height:92vh}dialog::backdrop{background:rgba(17,24,39,.5)}dialog form{padding:20px;max-height:92vh;overflow:auto}.sheet-head{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:none;font-size:28px;color:var(--muted)}
+.score-box{display:grid;grid-template-columns:1fr 1fr;gap:10px}.score-card{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:12px}
+@media(max-width:560px){.hero-top{flex-direction:column;align-items:stretch}.hero-top button{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="header-row"><div><p class="eyebrow">PROJECT 300K</p><h1>競馬投資・検証アプリ</h1></div><span class="version">Version 2.0</span></div></header>
+
+<main>
+<section id="page-home" class="page active">
+  <section class="hero">
+    <div class="hero-top">
+      <div><div class="small" style="opacity:.75">今月の収支</div><div class="hero-value" id="profit">¥0</div><div class="small" id="recovery" style="opacity:.75">回収率 0.0%</div></div>
+      <button class="primary" id="newRaceBtn">＋ レース登録</button>
+    </div>
+  </section>
+  <section class="grid">
+    <div class="card metric"><span class="small muted">登録レース</span><b id="raceCount">0</b></div>
+    <div class="card metric"><span class="small muted">未反省</span><b id="pendingCount">0</b></div>
+    <div class="card metric"><span class="small muted">展開データ待ち</span><b id="waitingCount">0</b></div>
+    <div class="card metric"><span class="small muted">P95以上</span><b id="p95Count">0</b></div>
+  </section>
+  <section class="card section"><div class="section-head"><h2>最近のレース</h2><button class="secondary" id="exportBtn">バックアップ</button></div><div id="raceList"></div><p id="empty" class="muted" style="text-align:center;padding:18px 0 4px">まだ登録がありません。</p></section>
+</section>
+
+<section id="page-race" class="page">
+  <section class="card"><div class="section-head"><h2>レース一覧</h2><button class="primary" id="newRaceBtn2">＋登録</button></div><div id="raceListFull"></div></section>
+</section>
+
+<section id="page-predict" class="page">
+  <section class="card">
+    <div class="section-head"><h2>P基準予想</h2><span class="pill">手入力版</span></div>
+    <label>対象レース<select id="predictRace"></select></label>
+    <label>馬名<input id="horseName" placeholder="例：マジシャンガール"></label>
+    <div class="score-box">
+      <label>馬番<input type="number" id="horseNo" min="1"></label>
+      <label>P評価<input type="number" id="pScore" min="0" max="100" value="80"></label>
+      <label>信頼度<select id="confidence"><option>A</option><option selected>B</option><option>C</option><option>D</option></select></label>
+      <label>危険度<input type="number" id="danger" min="0" max="100" value="50"></label>
+      <label>人気<input type="number" id="popularity" min="1" value="1"></label>
+      <label>タイム指数<input type="number" id="timeIndex" value="0"></label>
+    </div>
+    <label>距離適性<select id="distanceFit"><option>高</option><option selected>中</option><option>低</option></select></label>
+    <label>コメント<textarea id="horseComment" rows="3"></textarea></label>
+    <button class="primary wide" id="addHorseBtn">評価馬を追加</button>
+  </section>
+  <section class="card section">
+    <div class="section-head"><h2>評価一覧</h2><button class="secondary" id="generateBtn">P基準判定</button></div>
+    <div id="horseList"></div>
+  </section>
+  <section id="predictionResult" class="card section hidden">
+    <div class="section-head"><h2>P基準による予想</h2><span id="raceJudge" class="pill"></span></div>
+    <div id="predictionSummary"></div>
+    <h3>推奨資金配分</h3>
+    <div id="betPlan"></div>
+    <button class="primary wide" id="savePredictionBtn">予想を保存</button>
+  </section>
+</section>
+
+<section id="page-bankroll" class="page">
+  <section class="card">
+    <h2>資金配分</h2>
+    <label>1日予算（円）<input type="number" id="dailyBudget" value="10000" min="1000" step="100"></label>
+    <label>本線割合（%）<input type="number" id="mainPct" value="60" min="0" max="100"></label>
+    <label>押さえ割合（%）<input type="number" id="coverPct" value="30" min="0" max="100"></label>
+    <label>穴狙い割合（%）<input type="number" id="valuePct" value="10" min="0" max="100"></label>
+    <button class="primary wide" id="calcBudgetBtn">資金配分を計算</button>
+  </section>
+  <section class="card section"><h2>配分結果</h2><div id="budgetResult"></div></section>
+</section>
+
+<section id="page-result" class="page">
+  <section class="card">
+    <h2>結果・収支入力</h2>
+    <label>対象レース<select id="resultRace"></select></label>
+    <label>実際の投資額（円）<input type="number" id="stake" min="0" step="100" value="0"></label>
+    <label>払戻額（円）<input type="number" id="payout" min="0" step="10" value="0"></label>
+    <label>着順メモ<textarea id="resultMemo" rows="4"></textarea></label>
+    <button class="primary wide" id="saveResultBtn">結果を保存</button>
+  </section>
+  <section class="card section"><h2>集計</h2><div id="resultStats"></div></section>
+</section>
+
+<section id="page-review" class="page">
+  <section class="card">
+    <div class="section-head"><h2>反省会管理</h2><span class="pill">P基準</span></div>
+    <label>対象レース<select id="reviewRace"></select></label>
+    <label>状態<select id="reviewStatus"><option>未反省</option><option>仮反省済み</option><option>展開データ待ち</option><option>完全反省済み</option></select></label>
+    <label>予想とのズレ<textarea id="reviewGap" rows="3"></textarea></label>
+    <label>改善メモ<textarea id="reviewNote" rows="4"></textarea></label>
+    <button class="primary wide" id="saveReviewBtn">反省内容を保存</button>
+  </section>
+  <section class="card section"><h2>反省状況</h2><div id="reviewList"></div></section>
+</section>
+</main>
+
+<nav class="tabs">
+<button class="tab active" data-page="home"><b>⌂</b>ホーム</button>
+<button class="tab" data-page="race"><b>🏇</b>レース</button>
+<button class="tab" data-page="predict"><b>◎</b>P基準</button>
+<button class="tab" data-page="bankroll"><b>¥</b>資金</button>
+<button class="tab" data-page="result"><b>📈</b>結果</button>
+<button class="tab" data-page="review"><b>✎</b>反省会</button>
+</nav>
+
+<dialog id="raceDialog">
+<form id="raceForm" method="dialog">
+<div class="sheet-head"><h2>レース登録</h2><button class="close" value="cancel">×</button></div>
+<label>日付<input type="date" id="raceDate" required></label>
+<label>競馬場<input id="venue" required></label>
+<label>レース番号<input type="number" id="raceNo" min="1" max="12" required></label>
+<label>基本予算（円）<input type="number" id="budget" value="10000" min="1000" step="100" required></label>
+<label>区分<select id="raceType"><option>検証</option><option>勝負</option><option>見送り候補</option></select></label>
+<label>メモ<textarea id="memo" rows="3"></textarea></label>
+<button class="primary wide" value="default">保存</button>
+</form>
+</dialog>
+
+<script>
+const KEY="project300k_v2";let db=load();let tempHorses=[];let currentPrediction=null;
+const $=id=>document.getElementById(id);const yen=new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0});
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{races:[],settings:{dailyBudget:10000}}}catch{return{races:[],settings:{dailyBudget:10000}}}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+document.querySelectorAll(".tab").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));btn.classList.add("active");$("page-"+btn.dataset.page).classList.add("active");window.scrollTo({top:0,behavior:"smooth"})});
+function openRace(){ $("raceForm").reset(); $("raceDate").value=new Date().toISOString().slice(0,10); $("budget").value=10000; $("raceDialog").showModal()}
+$("newRaceBtn").onclick=openRace;$("newRaceBtn2").onclick=openRace;
+$("raceForm").onsubmit=e=>{e.preventDefault();db.races.push({id:String(Date.now()),date:$("raceDate").value,venue:$("venue").value.trim(),raceNo:Number($("raceNo").value),budget:Number($("budget").value),raceType:$("raceType").value,memo:$("memo").value.trim(),stake:0,payout:0,reviewStatus:"未反省"});persist();$("raceDialog").close()}
+function raceHTML(r){const p=(r.payout||0)-(r.stake||0);return `<div class="race-item"><div><strong>${r.date} ${r.venue}${r.raceNo}R</strong><p class="small muted">${r.raceType}・予算 ${yen.format(r.budget||0)}・${r.judge||"予想未保存"}</p></div><div style="text-align:right"><span class="pill">${r.reviewStatus||"未反省"}</span><p class="${p>=0?"good":"bad"}"><strong>${p>0?"+":""}${yen.format(p)}</strong></p></div></div>`}
+function renderAll(){const st=db.races.reduce((s,r)=>s+(r.stake||0),0),pa=db.races.reduce((s,r)=>s+(r.payout||0),0),pr=pa-st;$("profit").textContent=`${pr>0?"+":""}${yen.format(pr)}`;$("recovery").textContent=`回収率 ${st?(pa/st*100).toFixed(1):"0.0"}%`;$("raceCount").textContent=db.races.length;$("pendingCount").textContent=db.races.filter(r=>(r.reviewStatus||"未反省")==="未反省").length;$("waitingCount").textContent=db.races.filter(r=>r.reviewStatus==="展開データ待ち").length;$("p95Count").textContent=db.races.filter(r=>(r.topP||0)>=95).length;const html=[...db.races].reverse().map(raceHTML).join("");$("raceList").innerHTML=html;$("raceListFull").innerHTML=html||'<p class="muted">まだ登録がありません。</p>';$("empty").classList.toggle("hidden",db.races.length>0);const opts=db.races.map(r=>`<option value="${r.id}">${r.date} ${r.venue}${r.raceNo}R</option>`).join("");["predictRace","resultRace","reviewRace"].forEach(id=>$(id).innerHTML=opts||'<option value="">レースを登録してください</option>');$("resultStats").innerHTML=`<div class="stat-line"><span>総投資</span><strong>${yen.format(st)}</strong></div><div class="stat-line"><span>総払戻</span><strong>${yen.format(pa)}</strong></div><div class="stat-line"><span>収支</span><strong>${yen.format(pr)}</strong></div><div class="stat-line"><span>回収率</span><strong>${st?(pa/st*100).toFixed(1):"0.0"}%</strong></div>`;$("reviewList").innerHTML=[...db.races].reverse().map(r=>`<div class="review-item"><div><strong>${r.date} ${r.venue}${r.raceNo}R</strong><p class="small muted">${r.reviewNote||"改善メモなし"}</p></div><span class="pill">${r.reviewStatus||"未反省"}</span></div>`).join("")||'<p class="muted">まだ登録がありません。</p>'}
+$("addHorseBtn").onclick=()=>{if(!$("horseName").value.trim())return alert("馬名を入力してください");tempHorses.push({name:$("horseName").value.trim(),no:Number($("horseNo").value),p:Number($("pScore").value),confidence:$("confidence").value,danger:Number($("danger").value),popularity:Number($("popularity").value),timeIndex:Number($("timeIndex").value),distanceFit:$("distanceFit").value,comment:$("horseComment").value.trim()});$("horseName").value="";renderHorses()}
+function renderHorses(){const s=[...tempHorses].sort((a,b)=>b.p-a.p||a.danger-b.danger);$("horseList").innerHTML=s.map((h,i)=>`<div class="race-item"><div><strong>${["◎","○","▲","△","☆"][i]||""} ${h.no}番 ${h.name}</strong><p class="small muted">P${h.p}・信頼度${h.confidence}・危険度${h.danger}・人気${h.popularity}</p></div><button class="mini" onclick="removeHorse(${tempHorses.indexOf(h)})">削除</button></div>`).join("")||'<p class="muted">評価馬を追加してください。</p>'}
+window.removeHorse=i=>{tempHorses.splice(i,1);renderHorses()}
+$("generateBtn").onclick=()=>{if(!tempHorses.length)return alert("評価馬を追加してください");const s=[...tempHorses].sort((a,b)=>b.p-a.p||a.danger-b.danger);const top=s[0];let judge="検証";if(top.p>=95&&top.confidence==="A"&&top.danger<=35)judge="勝負";else if(top.p>=90&&["A","B"].includes(top.confidence)&&top.danger<=50)judge="準勝負";else if(top.p>=85&&top.danger<=60)judge="通常";else if(top.p<80||top.danger>=70||top.confidence==="D")judge="見送り";const budget=Number(db.races.find(r=>r.id===$("predictRace").value)?.budget||10000);const rate={勝負:1,準勝負:.8,通常:.6,検証:.4,見送り:0}[judge];const usable=Math.floor(budget*rate/100)*100;currentPrediction={horses:s,judge,top,usable};$("predictionResult").classList.remove("hidden");$("raceJudge").textContent=judge;$("predictionSummary").innerHTML=`<div class="stat-line"><span>◎ 本命</span><strong>${top.no}番 ${top.name}</strong></div><div class="stat-line"><span>P評価</span><strong>P${top.p}</strong></div><div class="stat-line"><span>危険度</span><strong>${top.danger}</strong></div><div class="stat-line"><span>1着候補</span><strong>${s.slice(0,3).map(x=>x.no+"番").join("・")}</strong></div>`;$("betPlan").innerHTML=usable?`<div class="stat-line"><span>本線</span><strong>${yen.format(Math.floor(usable*.6/100)*100)}</strong></div><div class="stat-line"><span>押さえ</span><strong>${yen.format(Math.floor(usable*.3/100)*100)}</strong></div><div class="stat-line"><span>穴狙い</span><strong>${yen.format(usable-Math.floor(usable*.6/100)*100-Math.floor(usable*.3/100)*100)}</strong></div>`:'<p class="muted">見送り判定です。</p>'}
+$("savePredictionBtn").onclick=()=>{const r=db.races.find(x=>x.id===$("predictRace").value);if(!r||!currentPrediction)return;r.judge=currentPrediction.judge;r.topHorse=currentPrediction.top.name;r.topP=currentPrediction.top.p;r.prediction=currentPrediction;persist();alert("予想を保存しました")}
+$("calcBudgetBtn").onclick=()=>{const total=Number($("dailyBudget").value),a=Number($("mainPct").value),b=Number($("coverPct").value),c=Number($("valuePct").value);if(a+b+c!==100)return alert("割合の合計を100%にしてください");const main=Math.floor(total*a/100/100)*100,cover=Math.floor(total*b/100/100)*100,value=total-main-cover;$("budgetResult").innerHTML=`<div class="stat-line"><span>本線</span><strong>${yen.format(main)}</strong></div><div class="stat-line"><span>押さえ</span><strong>${yen.format(cover)}</strong></div><div class="stat-line"><span>穴狙い</span><strong>${yen.format(value)}</strong></div>`}
+$("saveResultBtn").onclick=()=>{const r=db.races.find(x=>x.id===$("resultRace").value);if(!r)return alert("対象レースを選択してください");r.stake=Number($("stake").value||0);r.payout=Number($("payout").value||0);r.resultMemo=$("resultMemo").value.trim();persist();alert("結果を保存しました")}
+$("saveReviewBtn").onclick=()=>{const r=db.races.find(x=>x.id===$("reviewRace").value);if(!r)return alert("対象レースを選択してください");r.reviewStatus=$("reviewStatus").value;r.reviewGap=$("reviewGap").value.trim();r.reviewNote=$("reviewNote").value.trim();persist();alert("反省内容を保存しました")}
+$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Project300K_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)}
+renderAll();renderHorses();
+</script>
+</body>
+</html>
